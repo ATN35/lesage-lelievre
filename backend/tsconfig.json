@@ -1,10 +1,11 @@
 {
-    "compilerOptions": {
-      "target": "ES6",
-      "module": "CommonJS",
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true
-    }
-  }
-  
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ESNext",
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node_modules", ".next"]
+}
