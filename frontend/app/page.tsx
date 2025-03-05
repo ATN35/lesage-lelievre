@@ -4,6 +4,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
+    <>
     <div className="bg-gray-100 min-h-screen">
       <Navbar />
       <main className="container mx-auto text-center py-16 px-6">
@@ -14,7 +15,7 @@ export default function Home() {
         
         <div className="mt-10">
           <Image 
-            src="/funeral_home.jpg" 
+            src="/images/chambre_funeraire_lesage-lelievre_argentre.png" 
             alt="Pompes Funèbres Lesage-Lelièvre" 
             width={800} 
             height={400} 
@@ -33,5 +34,6 @@ export default function Home() {
       </main>
       <Footer />
     </div>
+    </>
   );
 }

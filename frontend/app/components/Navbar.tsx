@@ -32,7 +32,7 @@ export default function Navbar() {
         <ul className={`md:flex space-x-6 md:space-x-6 absolute md:static bg-gray-900 md:bg-transparent top-16 left-0 w-full md:w-auto flex-col md:flex-row items-center md:items-center transition-all duration-300 ease-in-out ${
           menuOpen ? "flex" : "hidden"
         } md:flex`}>
-          <li><Link href="/obituaries" className="hover:text-gray-400 p-2">Avis d'obsèques</Link></li>
+          <li><Link href="/obituaries" className="hover:text-gray-400 p-2">Avis obsèques</Link></li>
           <li><Link href="/products" className="hover:text-gray-400 p-2">Nos Produits</Link></li>
           <li><Link href="/contact" className="hover:text-gray-400 p-2">Contact</Link></li>
 
@@ -40,7 +40,7 @@ export default function Navbar() {
             <li><Link href="/dashboard/user" className="hover:text-gray-400 p-2">Mon Compte</Link></li>
           ) : (
             <>
-              <li><Link href="/auth/register" className="hover:text-gray-400 p-2">S'inscrire</Link></li>
+              <li><Link href="/auth/register" className="hover:text-gray-400 p-2">Inscription</Link></li>
               <li><Link href="/auth/login" className="hover:text-gray-400 p-2">Se connecter</Link></li>
             </>
           )}
