@@ -80,6 +80,7 @@ export default function Navbar() {
                 <li><Link href="/products/coffins" className="block px-4 py-2 hover:bg-gray-700">Cercueils</Link></li>
                 <li><Link href="/products/urns" className="block px-4 py-2 hover:bg-gray-700">Urnes</Link></li>
                 <li><Link href="/products/flowers" className="block px-4 py-2 hover:bg-gray-700">Fleurs</Link></li>
+                <li><Link href="/products/plaques" className="block px-4 py-2 hover:bg-gray-700">Plaques Funéraires</Link></li>
               </ul>
             )}
           </li>
