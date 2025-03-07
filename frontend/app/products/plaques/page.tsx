@@ -7,25 +7,25 @@ const plaques = [
     id: 1,
     name: "Plaque de Granit",
     price: "150€",
-    image: "/images/plaque_granit.jpg",
+    image: "/images/plaque-funeraire.jpg",
   },
   {
     id: 2,
     name: "Plaque d’Urne",
     price: "120€",
-    image: "/images/plaque_urne.jpg",
+    image: "/images/plaque-funeraire.jpg",
   },
   {
     id: 3,
     name: "Plaque de Cavurne",
     price: "180€",
-    image: "/images/plaque_cavurne.jpg",
+    image: "/images/plaque-funeraire.jpg",
   },
   {
     id: 4,
     name: "Plaque de Vase",
     price: "90€",
-    image: "/images/plaque_vase.jpg",
+    image: "/images/plaque-funeraire.jpg",
   },
 ];
 

@@ -3,9 +3,9 @@
 import Image from "next/image";
 
 const coffins = [
-  { id: 1, name: "Cercueil en chêne massif", price: "850€", image: "/images/coffin1.jpg" },
-  { id: 2, name: "Cercueil écologique", price: "620€", image: "/images/coffin2.jpg" },
-  { id: 3, name: "Cercueil classique en pin", price: "450€", image: "/images/coffin3.jpg" },
+  { id: 1, name: "Cercueil en chêne massif", price: "850€", image: "/images/Casket -1.jpg" },
+  { id: 2, name: "Cercueil écologique", price: "620€", image: "/images/Casket -1.jpg" },
+  { id: 3, name: "Cercueil classique en pin", price: "450€", image: "/images/Casket -1.jpg" },
 ];
 
 export default function Coffins() {

@@ -7,19 +7,19 @@ const urns = [
     id: 1,
     name: "Urne funéraire en céramique",
     price: "120€",
-    image: "/images/urne_ceramique.jpg",
+    image: "/images/urnes.jpg",
   },
   {
     id: 2,
     name: "Urne en marbre",
     price: "180€",
-    image: "/images/urne_marbre.jpg",
+    image: "/images/urnes.jpg",
   },
   {
     id: 3,
     name: "Urne biodégradable",
     price: "90€",
-    image: "/images/urne_biodegradable.jpg",
+    image: "/images/urnes.jpg",
   },
 ];
 

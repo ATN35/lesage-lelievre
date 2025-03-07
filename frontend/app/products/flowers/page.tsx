@@ -3,9 +3,9 @@
 import Image from "next/image";
 
 const flowers = [
-  { id: 1, name: "Bouquet de roses blanches", price: "50€", image: "/images/flowers1.jpg" },
-  { id: 2, name: "Couronne florale", price: "120€", image: "/images/flowers2.jpg" },
-  { id: 3, name: "Arrangement floral", price: "90€", image: "/images/flowers3.jpg" },
+  { id: 1, name: "Bouquet de roses blanches", price: "50€", image: "/images/flowers.jpg" },
+  { id: 2, name: "Couronne florale", price: "120€", image: "/images/flowers.jpg" },
+  { id: 3, name: "Arrangement floral", price: "90€", image: "/images/flowers.jpg" },
 ];
 
 export default function Flowers() {
