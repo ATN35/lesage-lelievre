@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdown, setDropdown] = useState<string | null>(null);
+  const router = useRouter();
   let timeoutId: NodeJS.Timeout;
 
   useEffect(() => {
@@ -16,7 +18,7 @@ export default function Navbar() {
 
   // ✅ Fonction pour afficher le sous-menu immédiatement
   const handleMouseOver = (menu: string) => {
-    clearTimeout(timeoutId); // Annule la fermeture en attente
+    clearTimeout(timeoutId);
     setDropdown(menu);
   };
 
@@ -24,7 +26,14 @@ export default function Navbar() {
   const handleMouseOut = () => {
     timeoutId = setTimeout(() => {
       setDropdown(null);
-    }, 200); // Ajoute un délai pour éviter que le menu disparaisse immédiatement
+    }, 200);
+  };
+
+  // ✅ Fonction pour se déconnecter
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    router.push("/auth/login");
   };
 
   return (
@@ -50,11 +59,7 @@ export default function Navbar() {
           } md:flex`}
         >
           {/* ✅ Avis obsèques */}
-          <li
-            className="relative w-full md:w-auto"
-            onMouseOver={() => handleMouseOver("obituaries")}
-            onMouseOut={handleMouseOut}
-          >
+          <li className="relative w-full md:w-auto" onMouseOver={() => handleMouseOver("obituaries")} onMouseOut={handleMouseOut}>
             <button className="hover:text-gray-400 p-2 w-full md:w-auto text-left md:text-center">
               Avis obsèques ▾
             </button>
@@ -67,11 +72,7 @@ export default function Navbar() {
           </li>
 
           {/* ✅ Nos Produits */}
-          <li
-            className="relative w-full md:w-auto"
-            onMouseOver={() => handleMouseOver("products")}
-            onMouseOut={handleMouseOut}
-          >
+          <li className="relative w-full md:w-auto" onMouseOver={() => handleMouseOver("products")} onMouseOut={handleMouseOut}>
             <button className="hover:text-gray-400 p-2 w-full md:w-auto text-left md:text-center">
               Nos Produits ▾
             </button>
@@ -86,11 +87,7 @@ export default function Navbar() {
           </li>
 
           {/* ✅ Contact */}
-          <li
-            className="relative w-full md:w-auto"
-            onMouseOver={() => handleMouseOver("contact")}
-            onMouseOut={handleMouseOut}
-          >
+          <li className="relative w-full md:w-auto" onMouseOver={() => handleMouseOver("contact")} onMouseOut={handleMouseOut}>
             <button className="hover:text-gray-400 p-2 w-full md:w-auto text-left md:text-center">
               Contact ▾
             </button>
@@ -102,13 +99,9 @@ export default function Navbar() {
             )}
           </li>
 
-          {/* ✅ Inscription / Connexion */}
+          {/* ✅ Inscription / Connexion / Mon Compte */}
           {!isLoggedIn ? (
-            <li
-              className="relative w-full md:w-auto"
-              onMouseOver={() => handleMouseOver("auth")}
-              onMouseOut={handleMouseOut}
-            >
+            <li className="relative w-full md:w-auto" onMouseOver={() => handleMouseOver("auth")} onMouseOut={handleMouseOut}>
               <button className="hover:text-gray-400 p-2 w-full md:w-auto text-left md:text-center">
                 Compte ▾
               </button>
@@ -120,7 +113,24 @@ export default function Navbar() {
               )}
             </li>
           ) : (
-            <li><Link href="/dashboard/user" className="hover:text-gray-400 p-2">Mon Compte</Link></li>
+            <li className="relative w-full md:w-auto" onMouseOver={() => handleMouseOver("profile")} onMouseOut={handleMouseOut}>
+              <button className="hover:text-gray-400 p-2 w-full md:w-auto text-left md:text-center">
+                Mon Compte ▾
+              </button>
+              {dropdown === "profile" && (
+                <ul className="absolute left-0 mt-2 w-48 bg-gray-800 text-white shadow-md rounded-md z-50">
+                  <li><Link href="/dashboard/user" className="block px-4 py-2 hover:bg-gray-700">Tableau de Bord</Link></li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 hover:bg-gray-700 cursor-pointer"
+                    >
+                      Déconnexion
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </li>
           )}
         </ul>
       </div>
