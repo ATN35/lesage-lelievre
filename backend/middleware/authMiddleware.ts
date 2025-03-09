@@ -1,26 +1,58 @@
 import { Request, Response, NextFunction } from "express";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { prisma } from "../config/database";
 
-interface AuthRequest extends Request {
-  user?: any;
+interface AuthenticatedRequest extends Request {
+  user?: { id: string; email: string; role: string };
 }
 
-export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+// ✅ Middleware pour vérifier l'authentification
+export const authenticate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const token = req.header("Authorization")?.split(" ")[1];
-  if (!token) return res.status(403).json({ error: "Accès refusé" });
+
+  if (!token) {
+    res.status(401).json({ error: "Accès interdit, token manquant." });
+    return;
+  }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: string;
+      email: string;
+      role: string;
+    };
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ error: "Token invalide" });
+    res.status(403).json({ error: "Token invalide." });
   }
 };
 
-export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user?.role !== "admin") {
-    return res.status(403).json({ error: "Accès réservé aux administrateurs" });
+// ✅ Middleware pour vérifier si l'utilisateur est admin
+export const isAdmin = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  if (!req.user) {
+    res.status(401).json({ error: "Accès interdit, utilisateur non authentifié." });
+    return;
   }
-  next();
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+
+    if (!user || user.role !== "admin") {
+      res.status(403).json({ error: "Accès refusé, vous devez être administrateur." });
+      return;
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ error: "Erreur serveur." });
+  }
 };
