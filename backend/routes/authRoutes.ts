@@ -65,4 +65,32 @@ router.delete("/delete-account", authenticate, async (req: AuthenticatedRequest,
   }
 });
 
+// ✅ Route pour récupérer tous les utilisateurs (Admin uniquement)
+router.get("/admin/users", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user || req.user.role !== "admin") {
+      res.status(403).json({ error: "Accès interdit. Seul l'admin peut voir les utilisateurs." });
+      return;
+    }
+
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        reservation: { select: { id: true, productId: true, status: true, createdAt: true } },
+        messagesSent: { select: { id: true, content: true, createdAt: true } },
+        messagesReceived: { select: { id: true, content: true, createdAt: true } },
+      },
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error("Erreur récupération des utilisateurs :", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
 export default router;
