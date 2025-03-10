@@ -3,38 +3,35 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Reservation = {
+type Message = {
   id: string;
-  productName: string;
-  status: string;
+  content: string;
+  createdAt: string;
 };
 
 export default function UserDashboard() {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
 
-    // ✅ Si aucun rôle trouvé, redirige vers la page de connexion
     if (!storedRole) {
       router.push("/auth/login");
       return;
     }
 
-    // ✅ Si l'utilisateur est admin, le rediriger vers `/dashboard/admin`
-    if (storedRole === "admin") {
-      router.replace("/dashboard/admin");
-      return;
-    }
-
     setRole(storedRole);
 
-    fetch("/api/reservations/user")
+    const token = localStorage.getItem("token");
+
+    fetch("/api/messages/user", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((res) => res.json())
-      .then((data: Reservation[]) => setReservations(data))
-      .catch((error) => console.error("Erreur chargement des réservations:", error));
+      .then((data: Message[]) => setMessages(data))
+      .catch((error) => console.error("Erreur chargement des messages :", error));
   }, []);
 
   if (!role) {
@@ -44,16 +41,17 @@ export default function UserDashboard() {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold">Mon tableau de bord</h1>
-      <h2 className="text-xl mt-4">Mes réservations</h2>
+      <h2 className="text-xl mt-4">Mes messages envoyés</h2>
       <ul>
-        {reservations.length > 0 ? (
-          reservations.map((res) => (
-            <li key={res.id} className="border p-2 my-2">
-              {res.productName} - {res.status}
+        {messages.length > 0 ? (
+          messages.map((msg) => (
+            <li key={msg.id} className="border p-2 my-2">
+              <p>{msg.content}</p>
+              <small className="text-gray-500">Envoyé le {new Date(msg.createdAt).toLocaleString()}</small>
             </li>
           ))
         ) : (
-          <p className="text-gray-500">Aucune réservation trouvée.</p>
+          <p className="text-gray-500">Aucun message envoyé.</p>
         )}
       </ul>
     </div>

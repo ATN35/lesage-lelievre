@@ -1,67 +1,84 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+export default function ContactPage() {
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-  const handleSubmit = (e: React.FormEvent) => {
+    if (token) {
+      fetch("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => setUser({ name: data.name, email: data.email }))
+        .catch(() => setUser(null));
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Message envoyé :", formData);
-    alert("Votre message a bien été envoyé !");
-    setFormData({ name: "", email: "", message: "" });
+
+    if (!message.trim()) {
+      setStatus("error");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch("/api/messages/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: message }),
+      });
+
+      if (!res.ok) throw new Error("Échec de l'envoi");
+
+      setMessage("");
+      setStatus("success");
+    } catch (error) {
+      setStatus("error");
+    }
   };
 
   return (
-    <div className="container mx-auto px-6 py-16 text-center">
-      <h1 className="text-4xl font-bold text-gray-800">Nous Contacter</h1>
-      <p className="text-gray-600 mt-4">
-        Laissez-nous un message et nous vous répondrons dès que possible.
-      </p>
+    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+      <h2 className="text-2xl font-bold text-center mb-4">Contactez l'Admin</h2>
 
-      <form onSubmit={handleSubmit} className="mt-8 max-w-lg mx-auto bg-white p-6 shadow-lg rounded-lg">
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Nom"
-          className="w-full p-3 border rounded-lg mb-4"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="w-full p-3 border rounded-lg mb-4"
-          required
-        />
-        <textarea
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          placeholder="Votre message"
-          className="w-full p-3 border rounded-lg mb-4"
-          rows={4}
-          required
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-600 transition"
-        >
-          Envoyer
-        </button>
-      </form>
+      {user ? (
+        <>
+          <p className="text-center text-gray-600">De : {user.name} ({user.email})</p>
+          {status === "success" && <p className="text-green-500 text-center">Message envoyé !</p>}
+          {status === "error" && <p className="text-red-500 text-center">Échec de l'envoi.</p>}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <textarea
+              placeholder="Écrivez votre message ici..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full p-2 border rounded h-32"
+              required
+            ></textarea>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-500 transition"
+            >
+              Envoyer
+            </button>
+          </form>
+        </>
+      ) : (
+        <p className="text-center text-red-500">Vous devez être connecté pour envoyer un message.</p>
+      )}
     </div>
   );
 }

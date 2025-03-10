@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "../config/database";
 
-// ✅ Étendre l'interface Request pour inclure `user`
-interface AuthenticatedRequest extends Request {
+// ✅ Étendre et exporter l'interface Request
+export interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
 
-// ✅ Middleware pour vérifier l'authentification
+// ✅ Middleware d'authentification
 export const authenticate = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -34,7 +34,7 @@ export const authenticate = async (
       return;
     }
 
-    req.user = { id: user.id, email: user.email, role: user.role };
+    req.user = { id: user.id, email: user.email, role: user.role }; // ✅ Ajout de `user` sur `req`
     next();
   } catch (error) {
     res.status(403).json({ error: "Token invalide." });

@@ -1,77 +1,77 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/database";
+import crypto from "crypto"; // ✅ Import pour générer un UUID
 
-// ✅ Récupérer tous les avis d’obsèques
-export const getObituaries = async (req: Request, res: Response): Promise<void> => {
+// ✅ Récupérer tous les avis de décès
+export const getObituaries = async (req: Request, res: Response) => {
   try {
-    console.log("🔍 Requête reçue pour récupérer les avis d’obsèques...");
     const obituaries = await prisma.obituary.findMany({
       include: {
-        condolences: true,
+        condolence: true, // ✅ Correction du champ (avant: "condolences")
       },
     });
-    console.log("✅ Données récupérées :", obituaries);
+
     res.json(obituaries);
   } catch (error) {
-    console.error("❌ Erreur détaillée :", error);
-    res.status(500).json({ error: "Erreur lors de la récupération des avis d’obsèques" });
+    console.error("Erreur récupération avis de décès:", error);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 };
 
-// ✅ Ajouter un avis d’obsèques
-export const createObituary = async (req: Request, res: Response): Promise<void> => {
-  const { deceased, date, message } = req.body;
-
-  if (!deceased || !date || !message) {
-    res.status(400).json({ error: "Tous les champs sont obligatoires." });
-    return;
-  }
-
+// ✅ Créer un avis de décès
+export const createObituary = async (req: Request, res: Response) => {
   try {
+    const { deceased, date, message } = req.body;
+
     const newObituary = await prisma.obituary.create({
       data: {
+        id: crypto.randomUUID(), // ✅ Ajout de l'ID unique
         deceased,
         date: new Date(date),
         message,
       },
     });
-    res.status(201).json(newObituary);
+
+    res.status(201).json({ message: "Avis de décès créé avec succès", obituary: newObituary });
   } catch (error) {
-    console.error("❌ Erreur lors de l’ajout de l’avis d’obsèques :", error);
-    res.status(500).json({ error: "Erreur lors de l’ajout de l’avis d’obsèques" });
+    console.error("Erreur création avis de décès:", error);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 };
 
-// ✅ Ajouter une condoléance
-export const addCondolence = async (req: Request, res: Response): Promise<void> => {
-  const { obituaryId, message, author } = req.body;
-
-  if (!obituaryId || !message || !author) {
-    res.status(400).json({ error: "Tous les champs sont obligatoires." });
-    return;
-  }
-
+// ✅ Ajouter une condoléance à un avis de décès
+export const addCondolence = async (req: Request, res: Response) => {
   try {
-    // Vérifier si l'avis d'obsèques existe
-    const obituaryExists = await prisma.obituary.findUnique({
-      where: { id: obituaryId },
-    });
-
-    if (!obituaryExists) {
-      res.status(404).json({ error: "L'avis d'obsèques n'existe pas." });
-      return;
-    }
+    const { obituaryId, message, author } = req.body;
 
     const newCondolence = await prisma.condolence.create({
       data: {
-        obituaryId,
+        id: crypto.randomUUID(), // ✅ Ajout de l'ID unique
+        obituary: { connect: { id: obituaryId } }, // ✅ Connection à l'obituary
         message,
         author,
       },
     });
-    res.status(201).json(newCondolence);
+
+    res.status(201).json({ message: "Condoléance ajoutée avec succès", condolence: newCondolence });
   } catch (error) {
-    console.error("❌ Erreur lors de l’ajout de la condoléance :", error);
-    res.status(500).json({ error: "Erreur lors de l’ajout de la condoléance" });
+    console.error("Erreur ajout condoléance:", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+};
+
+// ✅ Supprimer un avis de décès (admin seulement)
+export const deleteObituary = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.obituary.delete({
+      where: { id },
+    });
+
+    res.json({ message: "Avis de décès supprimé avec succès" });
+  } catch (error) {
+    console.error("Erreur suppression avis de décès:", error);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 };
