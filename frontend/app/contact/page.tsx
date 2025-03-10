@@ -11,12 +11,18 @@ export default function ContactPage() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      fetch("/api/auth/me", {
+      fetch("http://localhost:5000/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) throw new Error("Erreur de récupération de l'utilisateur");
+          return res.json();
+        })
         .then((data) => setUser({ name: data.name, email: data.email }))
-        .catch(() => setUser(null));
+        .catch((error) => {
+          console.error("Erreur lors de la récupération de l'utilisateur :", error); // ✅ Log l'erreur en console
+          setUser(null);
+        });
     }
   }, []);
 
@@ -31,7 +37,7 @@ export default function ContactPage() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("/api/messages/contact", {
+      const res = await fetch("http://localhost:5000/api/messages/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,19 +51,20 @@ export default function ContactPage() {
       setMessage("");
       setStatus("success");
     } catch (error) {
+      console.error("Erreur lors de l'envoi du message :", error); // ✅ Log l'erreur ici aussi
       setStatus("error");
     }
   };
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-center mb-4">Contactez l'Admin</h2>
+      <h2 className="text-2xl font-bold text-center mb-4">Contactez Admin</h2>
 
       {user ? (
         <>
           <p className="text-center text-gray-600">De : {user.name} ({user.email})</p>
           {status === "success" && <p className="text-green-500 text-center">Message envoyé !</p>}
-          {status === "error" && <p className="text-red-500 text-center">Échec de l'envoi.</p>}
+          {status === "error" && <p className="text-red-500 text-center">Échec envoi.</p>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <textarea
@@ -70,7 +77,7 @@ export default function ContactPage() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-500 transition"
+              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-500 transition cursor-pointer"
             >
               Envoyer
             </button>

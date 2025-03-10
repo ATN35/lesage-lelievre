@@ -127,4 +127,29 @@ router.delete("/admin/users/:userId", authenticate, async (req: AuthenticatedReq
   }
 });
 
+// ✅ Route pour permettre à l'admin de voir tous les messages envoyés par les utilisateurs
+router.get("/admin/messages", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user || req.user.role !== "admin") {
+      res.status(403).json({ error: "Accès interdit. Seul un administrateur peut voir les messages." });
+      return;
+    }
+
+    const messages = await prisma.message.findMany({
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        sender: { select: { id: true, name: true, email: true } }, // Récupère les infos de l'expéditeur
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(messages);
+  } catch (error) {
+    console.error("Erreur récupération des messages :", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
 export default router;

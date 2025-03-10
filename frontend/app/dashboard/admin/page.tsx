@@ -13,6 +13,11 @@ type Message = {
   id: string;
   content: string;
   createdAt: string;
+  sender: {
+    id: string;
+    name: string;
+    email: string;
+  };
 };
 
 type User = {
@@ -28,11 +33,13 @@ type User = {
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
     fetchUsers();
+    fetchMessages();
   }, []);
 
   const fetchUsers = () => {
@@ -54,7 +61,26 @@ export default function AdminDashboard() {
       });
   };
 
-  // ✅ Fonction pour supprimer un utilisateur
+  const fetchMessages = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("Vous devez être connecté en tant qu'admin.");
+      return;
+    }
+
+    fetch("http://localhost:5000/api/auth/admin/messages", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setMessages(data))
+      .catch((err) => {
+        console.error("Erreur chargement messages :", err);
+        setError("Impossible de charger les messages");
+      });
+  };
+
+  // ✅ Supprimer un utilisateur
   const handleDeleteUser = async (userId: string) => {
     if (!confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
 
@@ -94,28 +120,18 @@ export default function AdminDashboard() {
         <table className="min-w-full bg-white shadow-md rounded-lg">
           <thead>
             <tr className="bg-gray-800 text-white">
-              <th className="py-2 px-4 text-left">ID</th>
               <th className="py-2 px-4">Nom</th>
               <th className="py-2 px-4">Email</th>
               <th className="py-2 px-4">Rôle</th>
-              <th className="py-2 px-4">Créé le</th>
-              <th className="py-2 px-4">Réservations</th>
-              <th className="py-2 px-4">Messages Envoyés</th>
-              <th className="py-2 px-4">Messages Reçus</th>
               <th className="py-2 px-4">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="border-b hover:bg-gray-100">
-                <td className="py-2 px-4">{user.id}</td>
                 <td className="py-2 px-4">{user.name}</td>
                 <td className="py-2 px-4">{user.email}</td>
                 <td className="py-2 px-4">{user.role}</td>
-                <td className="py-2 px-4">{new Date(user.createdAt).toLocaleDateString()}</td>
-                <td className="py-2 px-4">{user.reservation.length}</td>
-                <td className="py-2 px-4">{user.messagesSent.length}</td>
-                <td className="py-2 px-4">{user.messagesReceived.length}</td>
                 <td className="py-2 px-4">
                   {user.role !== "admin" && (
                     <button
@@ -126,6 +142,31 @@ export default function AdminDashboard() {
                     </button>
                   )}
                 </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Messages */}
+      <h2 className="text-2xl font-bold mt-6">Messages des Utilisateurs</h2>
+      <div className="overflow-x-auto mt-4">
+        <table className="min-w-full bg-white shadow-md rounded-lg">
+          <thead>
+            <tr className="bg-gray-800 text-white">
+              <th className="py-2 px-4">Utilisateur</th>
+              <th className="py-2 px-4">Email</th>
+              <th className="py-2 px-4">Message</th>
+              <th className="py-2 px-4">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {messages.map((msg) => (
+              <tr key={msg.id} className="border-b hover:bg-gray-100">
+                <td className="py-2 px-4">{msg.sender.name}</td>
+                <td className="py-2 px-4">{msg.sender.email}</td>
+                <td className="py-2 px-4">{msg.content}</td>
+                <td className="py-2 px-4">{new Date(msg.createdAt).toLocaleDateString()}</td>
               </tr>
             ))}
           </tbody>
