@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "../config/database";
 
+// ✅ Étendre l'interface Request pour inclure `user`
 interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
@@ -38,23 +39,4 @@ export const authenticate = async (
   } catch (error) {
     res.status(403).json({ error: "Token invalide." });
   }
-};
-
-// ✅ Middleware pour vérifier si l'utilisateur est admin
-export const isAdmin = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  if (!req.user) {
-    res.status(401).json({ error: "Accès interdit, utilisateur non authentifié." });
-    return;
-  }
-
-  if (req.user.role !== "admin") {
-    res.status(403).json({ error: "Accès refusé, vous devez être administrateur." });
-    return;
-  }
-
-  next();
 };

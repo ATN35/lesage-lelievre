@@ -33,11 +33,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (!user.role) {
-      res.status(500).json({ error: "Rôle utilisateur non défini" });
-      return;
-    }
-
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET as string,
