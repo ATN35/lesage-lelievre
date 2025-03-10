@@ -98,7 +98,7 @@ export default function UserDashboard() {
         {success && <p className="text-green-500 text-center">{success}</p>}
         <button
           onClick={handleDeleteAccount}
-          className="w-full bg-red-600 text-white p-2 rounded hover:bg-red-500 transition"
+          className="w-full bg-red-600 text-white p-2 rounded hover:bg-red-500 transition cursor-pointer"
         >
           Supprimer mon compte
         </button>
