@@ -1,10 +1,15 @@
 import express, { Response } from "express";
-import { register, login } from "../controllers/authController";
-import { authenticate } from "../middleware/authMiddleware";
+import { register, login, createAdmin } from "../controllers/authController"; // ✅ Ajoute createAdmin
+import { authenticate, AuthenticatedRequest } from "../middleware/authMiddleware";
 import { prisma } from "../config/database";
-import { AuthenticatedRequest } from "../middleware/authMiddleware"; // ✅ Importer le type
 
 const router = express.Router();
+
+// ✅ Route d'inscription
+router.post("/register", register);
+
+// ✅ Route de connexion
+router.post("/login", login);
 
 // ✅ Route pour récupérer l'utilisateur connecté
 router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -30,5 +35,8 @@ router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response)
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+
+// ✅ Route pour créer un administrateur
+router.post("/create-admin", createAdmin);
 
 export default router;
