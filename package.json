@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "mapbox-gl": "^3.10.0",
-    "react-icons": "^5.5.0"
-  }
-}
