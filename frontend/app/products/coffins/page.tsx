@@ -1,14 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 
-const coffins = [
-  { id: 1, name: "Cercueil en chêne massif", price: "850€", image: "/images/Casket -1.jpg" },
-  { id: 2, name: "Cercueil écologique", price: "620€", image: "/images/Casket -1.jpg" },
-  { id: 3, name: "Cercueil classique en pin", price: "450€", image: "/images/Casket -1.jpg" },
+type Coffin = {
+  id: number;
+  name: string;
+  price: string;
+  image: string;
+  description: string;
+};
+
+const coffins: Coffin[] = [
+  { id: 1, name: "Cercueil en chêne massif", price: "850€", image: "/images/Casket-1.jpg", description: "Un cercueil en chêne massif avec finition vernie et intérieur en satin." },
+  { id: 2, name: "Cercueil écologique", price: "620€", image: "/images/Casket-1.jpg", description: "Un cercueil écologique en carton renforcé, biodégradable et respectueux de l'environnement." },
+  { id: 3, name: "Cercueil classique en pin", price: "450€", image: "/images/Casket-1.jpg", description: "Un cercueil en pin traditionnel avec un design sobre et élégant." },
 ];
 
 export default function Coffins() {
+  const [selectedProduct, setSelectedProduct] = useState<Coffin | null>(null);
+
   return (
     <div className="container mx-auto px-6 py-16 text-center">
       <h1 className="text-4xl font-bold text-gray-800">Nos Cercueils</h1>
@@ -20,12 +31,28 @@ export default function Coffins() {
             <Image src={coffin.image} alt={coffin.name} width={300} height={200} className="w-full h-48 object-cover rounded-lg" />
             <h2 className="text-lg font-bold mt-4">{coffin.name}</h2>
             <p className="text-gray-600">{coffin.price}</p>
-            <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+            <button
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer"
+              onClick={() => setSelectedProduct(coffin)}
+            >
               Voir plus
             </button>
           </div>
         ))}
       </div>
+
+      {selectedProduct && (
+        <div className="mt-6 p-4 border rounded bg-gray-100 text-left">
+          <h3 className="text-lg font-semibold">{selectedProduct.name}</h3>
+          <p className="text-gray-700 mt-2">{selectedProduct.description}</p>
+          <button
+            className="mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-400 transition cursor-pointer"
+            onClick={() => setSelectedProduct(null)}
+          >
+            Fermer
+          </button>
+        </div>
+      )}
     </div>
   );
 }
