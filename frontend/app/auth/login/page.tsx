@@ -3,55 +3,82 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Login() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Erreur de connexion");
+      if (!res.ok) {
+        setError(data.error || "Erreur de connexion");
+        setLoading(false);
+        return;
       }
 
       localStorage.setItem("token", data.token);
-      router.push("/dashboard/user");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Une erreur inconnue est survenue");
-      }
+      localStorage.setItem("role", data.role);
+
+      setTimeout(() => {
+        if (data.role === "admin") {
+          router.push("/dashboard/admin");
+        } else {
+          router.push("/dashboard/user");
+        }
+      }, 500);
+    } catch (err) {
+      console.error("Erreur lors de la connexion :", err);
+      setError("Erreur serveur. Veuillez réessayer.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-bold">Connexion</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-        <input type="email" name="email" placeholder="Email" onChange={handleChange} className="border p-2" required />
-        <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} className="border p-2" required />
-        <button type="submit" className="bg-blue-500 text-white p-2">Se connecter</button>
+    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+      <h2 className="text-2xl font-bold text-center mb-4">Connexion</h2>
+
+      {error && <p className="text-red-500 text-center">{error}</p>}
+
+      <form onSubmit={handleLogin} className="space-y-4">
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-500 transition disabled:opacity-50"
+          disabled={loading}
+        >
+          {loading ? "Connexion..." : "Se connecter"}
+        </button>
       </form>
-      <p className="mt-4">
-        Pas encore inscrit ? <a href="/auth/register" className="text-blue-500">Créer un compte</a>
-      </p>
     </div>
   );
 }

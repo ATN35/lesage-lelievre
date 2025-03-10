@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Reservation = {
   id: string;
@@ -10,13 +11,35 @@ type Reservation = {
 
 export default function UserDashboard() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [role, setRole] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+
+    // ✅ Si aucun rôle trouvé, redirige vers la page de connexion
+    if (!storedRole) {
+      router.push("/auth/login");
+      return;
+    }
+
+    // ✅ Si l'utilisateur est admin, le rediriger vers `/dashboard/admin`
+    if (storedRole === "admin") {
+      router.replace("/dashboard/admin");
+      return;
+    }
+
+    setRole(storedRole);
+
     fetch("/api/reservations/user")
       .then((res) => res.json())
       .then((data: Reservation[]) => setReservations(data))
       .catch((error) => console.error("Erreur chargement des réservations:", error));
   }, []);
+
+  if (!role) {
+    return <p className="text-center text-gray-500">Chargement...</p>;
+  }
 
   return (
     <div className="p-6">

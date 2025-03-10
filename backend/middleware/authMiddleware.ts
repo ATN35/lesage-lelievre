@@ -25,7 +25,15 @@ export const authenticate = async (
       email: string;
       role: string;
     };
-    req.user = decoded;
+
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+
+    if (!user) {
+      res.status(403).json({ error: "Utilisateur non trouvé." });
+      return;
+    }
+
+    req.user = { id: user.id, email: user.email, role: user.role };
     next();
   } catch (error) {
     res.status(403).json({ error: "Token invalide." });
@@ -43,16 +51,10 @@ export const isAdmin = async (
     return;
   }
 
-  try {
-    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-
-    if (!user || user.role !== "admin") {
-      res.status(403).json({ error: "Accès refusé, vous devez être administrateur." });
-      return;
-    }
-
-    next();
-  } catch (error) {
-    res.status(500).json({ error: "Erreur serveur." });
+  if (req.user.role !== "admin") {
+    res.status(403).json({ error: "Accès refusé, vous devez être administrateur." });
+    return;
   }
+
+  next();
 };
