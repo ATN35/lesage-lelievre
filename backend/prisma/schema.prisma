@@ -7,53 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model condolence {
+model Condolence {
   id         String   @id
   obituaryId String
   message    String
   author     String
   createdAt  DateTime @default(now())
-  obituary   obituary @relation(fields: [obituaryId], references: [id], onDelete: Cascade, map: "Condolence_obituaryId_fkey")
+  obituary   Obituary @relation(fields: [obituaryId], references: [id], onDelete: Cascade, map: "Condolence_obituaryId_fkey")
 
   @@index([obituaryId], map: "Condolence_obituaryId_fkey")
 }
 
-model obituary {
+model Obituary {
   id         String       @id
   date       DateTime
   message    String
   deceased   String
-  condolence condolence[]
+  condolence Condolence[]
 }
 
-model product {
+model Product {
   id          String        @id
   name        String
   description String
   price       Float
   stock       Int
-  reservation reservation[]
+  reservation Reservation[]
 }
 
-model reservation {
+model Reservation {
   id        String   @id
   userId    String
   productId String
   status    String   @default("pending")
   createdAt DateTime @default(now())
-  product   product  @relation(fields: [productId], references: [id], map: "Reservation_productId_fkey")
-  user      user     @relation(fields: [userId], references: [id], map: "Reservation_userId_fkey")
+  product   Product  @relation(fields: [productId], references: [id], map: "Reservation_productId_fkey")
+  user      User     @relation(fields: [userId], references: [id], map: "Reservation_userId_fkey")
 
   @@index([productId], map: "Reservation_productId_fkey")
   @@index([userId], map: "Reservation_userId_fkey")
 }
 
-model user {
-  id          String        @id
+model User {
+  id          String        @id @default(uuid())
   name        String
   email       String        @unique(map: "User_email_key")
   password    String
   role        String        @default("user")
   createdAt   DateTime      @default(now())
-  reservation reservation[]
+  reservation Reservation[]
+  messagesSent    Message[] @relation("SentMessages")
+  messagesReceived Message[] @relation("ReceivedMessages")
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
 }

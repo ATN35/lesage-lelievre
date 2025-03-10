@@ -1,14 +1,9 @@
-import express, { Request, Response, NextFunction } from "express";
-import { register, login } from "../controllers/authController";
-import { authenticate } from "../middleware/authMiddleware";
+import express, { Response } from "express";
+import { register, login, createAdmin } from "../controllers/authController"; // ✅ Ajout de createAdmin
+import { authenticate, AuthenticatedRequest } from "../middleware/authMiddleware";
 import { prisma } from "../config/database";
 
 const router = express.Router();
-
-// ✅ Étendre l'interface Request pour inclure `user`
-interface AuthenticatedRequest extends Request {
-  user?: { id: string; name: string; email: string; role: string };
-}
 
 // ✅ Route d'inscription
 router.post("/register", register);
@@ -17,7 +12,7 @@ router.post("/register", register);
 router.post("/login", login);
 
 // ✅ Route pour récupérer l'utilisateur connecté
-router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => { 
+router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({ error: "Utilisateur non authentifié" });
@@ -34,9 +29,38 @@ router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response)
       return;
     }
 
-    res.json(user);  // ✅ Ne pas ajouter de `return` ici
+    res.json(user);
   } catch (error) {
     console.error("Erreur lors de la récupération de l'utilisateur :", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// ✅ Route pour créer un administrateur
+router.post("/create-admin", createAdmin);
+
+// ✅ Route pour supprimer un compte utilisateur
+router.delete("/delete-account", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: "Utilisateur non authentifié" });
+      return;
+    }
+
+    // 🔍 Vérifie si l'utilisateur existe
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+
+    if (!user) {
+      res.status(404).json({ error: "Utilisateur non trouvé" });
+      return;
+    }
+
+    // ⚠️ Supprime l'utilisateur et toutes ses dépendances (ajuste selon ton schéma)
+    await prisma.user.delete({ where: { id: req.user.id } });
+
+    res.json({ message: "Compte supprimé avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression du compte :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });

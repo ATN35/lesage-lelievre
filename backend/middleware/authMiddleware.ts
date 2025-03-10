@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../config/database";
 
 // ✅ Étendre l'interface Request pour inclure `user`
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
 
