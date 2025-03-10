@@ -9,6 +9,7 @@ import productRoutes from "./routes/productRoutes";
 import reservationRoutes from "./routes/reservationRoutes";
 import obituaryRoutes from "./routes/obituaryRoutes";
 import messageRoutes from "./routes/messageRoutes";
+import adminRoutes from "./routes/adminRoutes";
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/obituaries", obituaryRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Serveur lancé sur le port ${PORT}`));
