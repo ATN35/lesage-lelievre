@@ -9,7 +9,14 @@ type Message = {
   createdAt: string;
 };
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
 export default function UserDashboard() {
+  const [user, setUser] = useState<User | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [role, setRole] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -25,15 +32,23 @@ export default function UserDashboard() {
     }
 
     setRole(storedRole);
-
     const token = localStorage.getItem("token");
 
-    fetch("/api/messages/user", {
+    // ✅ Récupération des infos utilisateur
+    fetch("http://localhost:5000/api/auth/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setUser(data))
+      .catch(() => setError("Impossible de récupérer vos informations"));
+
+    // ✅ Récupération des messages envoyés
+    fetch("http://localhost:5000/api/messages/user", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data: Message[]) => setMessages(data))
-      .catch((error) => console.error("Erreur chargement des messages :", error));
+      .catch(() => console.error("Erreur chargement des messages"));
   }, []);
 
   // ✅ Fonction pour supprimer son compte
@@ -77,8 +92,20 @@ export default function UserDashboard() {
     <div className="p-6">
       <h1 className="text-3xl font-bold">Mon tableau de bord</h1>
 
+      {/* ✅ Affichage des informations utilisateur */}
+      {user ? (
+        <div className="mt-4 bg-white p-4 rounded shadow-md">
+          <h2 className="text-xl font-semibold">Mes informations</h2>
+          <p className="text-gray-700 mt-2"><strong>Nom :</strong> {user.name}</p>
+          <p className="text-gray-700"><strong>Email :</strong> {user.email}</p>
+          <p className="text-gray-700"><strong>Mot de passe :</strong> ********</p>
+        </div>
+      ) : (
+        <p className="text-gray-500 mt-4">Chargement des informations...</p>
+      )}
+
       {/* ✅ Section Messages */}
-      <h2 className="text-xl mt-4">Mes messages envoyés</h2>
+      <h2 className="text-xl mt-6">Mes messages envoyés</h2>
       <ul>
         {messages.length > 0 ? (
           messages.map((msg) => (
