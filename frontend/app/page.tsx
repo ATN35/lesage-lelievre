@@ -3,6 +3,7 @@
 import { useState } from "react";
 import MapBox from "./components/MapBox";
 import Image from "next/image";
+import CookieBanner from "./components/CookieBanner"; // ✅ Import du composant de cookies
 
 export default function Home() {
   const [selectedLocationIndex, setSelectedLocationIndex] = useState(0);
@@ -19,11 +20,14 @@ export default function Home() {
   ];
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen relative">
+      {/* ✅ Bannière des cookies */}
+      <CookieBanner />
+
       <main className="container mx-auto text-center py-16 px-6">
         <h1 className="text-4xl font-bold text-gray-800">Accompagnement et Respect</h1>
         <p className="text-gray-600 mt-4 text-lg">
-          Depuis plusieurs générations, nous accompagnons les familles avec discrétion et bienveillance dans ces moments difficiles.
+          Depuis plusieurs décennies, nous accompagnons les familles avec discrétion et bienveillance dans ces moments difficiles.
         </p>
 
         {/* Bouton pour changer de localisation */}
