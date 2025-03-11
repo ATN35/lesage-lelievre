@@ -20,7 +20,7 @@ export default function ContactPage() {
         })
         .then((data) => setUser({ name: data.name, email: data.email }))
         .catch((error) => {
-          console.error("Erreur lors de la récupération de l'utilisateur :", error); // ✅ Log l'erreur en console
+          console.error("Erreur lors de la récupération de l'utilisateur :", error);
           setUser(null);
         });
     }
@@ -51,7 +51,7 @@ export default function ContactPage() {
       setMessage("");
       setStatus("success");
     } catch (error) {
-      console.error("Erreur lors de l'envoi du message :", error); // ✅ Log l'erreur ici aussi
+      console.error("Erreur lors de l'envoi du message :", error);
       setStatus("error");
     }
   };

@@ -41,7 +41,6 @@ export default function Flowers() {
         ))}
       </div>
 
-      {/* Affichage des détails du produit sélectionné */}
       {selectedProduct && (
         <div className="mt-6 p-4 border rounded bg-gray-100 text-left shadow-md">
           <h3 className="text-lg font-semibold">{selectedProduct.name}</h3>

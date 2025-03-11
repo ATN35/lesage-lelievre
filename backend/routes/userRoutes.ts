@@ -4,12 +4,10 @@ import { prisma } from "../config/database";
 
 const router = express.Router();
 
-// ✅ Interface pour typer `req` et ajouter `user`
 interface AuthenticatedRequest extends Request {
   user?: { id: string; name: string; email: string; role: string };
 }
 
-// ✅ Route pour récupérer l'utilisateur connecté
 router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
@@ -34,7 +32,6 @@ router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response)
   }
 });
 
-// ✅ Route pour supprimer son compte
 router.delete("/:id", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user || req.user.id !== req.params.id) {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import MapBox from "./components/MapBox";
 import Image from "next/image";
-import CookieBanner from "./components/CookieBanner"; // ✅ Import du composant de cookies
+import CookieBanner from "./components/CookieBanner";
 
 export default function Home() {
   const [selectedLocationIndex, setSelectedLocationIndex] = useState(0);
@@ -21,7 +21,7 @@ export default function Home() {
 
   return (
     <div className="bg-gray-100 min-h-screen relative">
-      {/* ✅ Bannière des cookies */}
+
       <CookieBanner />
 
       <main className="container mx-auto text-center py-16 px-6">
@@ -30,7 +30,6 @@ export default function Home() {
           Depuis plusieurs décennies, nous accompagnons les familles avec discrétion et bienveillance dans ces moments difficiles.
         </p>
 
-        {/* Bouton pour changer de localisation */}
         <div className="mt-6">
           <button
             onClick={() => setSelectedLocationIndex((prev) => (prev === 0 ? 1 : 0))}
@@ -40,7 +39,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Image qui change en fonction de la localisation */}
         <div className="mt-10">
           <Image 
             src={locations[selectedLocationIndex].image} 
@@ -51,7 +49,6 @@ export default function Home() {
           />
         </div>
 
-        {/* Carte MapBox avec la localisation actuelle */}
         <div className="mt-10">
           <MapBox selectedLocationIndex={selectedLocationIndex} />
         </div>

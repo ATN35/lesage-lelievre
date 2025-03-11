@@ -10,7 +10,7 @@ export default function NotFoundPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Simulation du chargement de 2 secondes
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);

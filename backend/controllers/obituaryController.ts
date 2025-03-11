@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/database";
-import crypto from "crypto"; // ✅ Import pour générer un UUID
+import crypto from "crypto";
 
-// ✅ Récupérer tous les avis de décès
 export const getObituaries = async (req: Request, res: Response) => {
   try {
     const obituaries = await prisma.obituary.findMany({
       include: {
-        condolence: true, // ✅ Correction du champ (avant: "condolences")
+        condolence: true,
       },
     });
 
@@ -18,14 +17,13 @@ export const getObituaries = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ Créer un avis de décès
 export const createObituary = async (req: Request, res: Response) => {
   try {
     const { deceased, date, message } = req.body;
 
     const newObituary = await prisma.obituary.create({
       data: {
-        id: crypto.randomUUID(), // ✅ Ajout de l'ID unique
+        id: crypto.randomUUID(),
         deceased,
         date: new Date(date),
         message,
@@ -39,15 +37,14 @@ export const createObituary = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ Ajouter une condoléance à un avis de décès
 export const addCondolence = async (req: Request, res: Response) => {
   try {
     const { obituaryId, message, author } = req.body;
 
     const newCondolence = await prisma.condolence.create({
       data: {
-        id: crypto.randomUUID(), // ✅ Ajout de l'ID unique
-        obituary: { connect: { id: obituaryId } }, // ✅ Connection à l'obituary
+        id: crypto.randomUUID(),
+        obituary: { connect: { id: obituaryId } },
         message,
         author,
       },
@@ -60,7 +57,6 @@ export const addCondolence = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ Supprimer un avis de décès (admin seulement)
 export const deleteObituary = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

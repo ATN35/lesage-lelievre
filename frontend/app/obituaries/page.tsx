@@ -8,7 +8,7 @@ export default function Obituaries() {
 
       <div className="mt-8 flex justify-center">
         <iframe 
-          src="https://services.precom-obseques.fr/widget/5df9ff1b1ae1a" // URL de ton widget
+          src="https://services.precom-obseques.fr/widget/5df9ff1b1ae1a"
           width="100%" 
           height="600"
           style={{ border: "none" }}

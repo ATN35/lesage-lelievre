@@ -1,4 +1,4 @@
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, Collection, Document } from "mongodb";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -17,10 +17,9 @@ async function connectMongoDB(): Promise<void> {
   }
 }
 
-// ✅ Fonction pour obtenir la collection cookies (évite d'accéder à MongoDB avant la connexion)
-const cookieCollection = (): any => {
+const cookieCollection = (): Collection<Document> => {
   if (!db) {
-    throw new Error("MongoDB n'est pas connecté !");
+    throw new Error("MongoDB n'est pas connecté ! Appelle connectMongoDB() d'abord.");
   }
   return db.collection("cookies");
 };

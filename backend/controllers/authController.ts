@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../config/database";
 import { Request, Response } from "express";
 
-// ✅ Route pour l'inscription des utilisateurs
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
 
@@ -20,7 +19,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// ✅ Route pour la connexion des utilisateurs
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
@@ -48,31 +46,25 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// ✅ Clé secrète stockée dans `.env` pour sécuriser la création d'admin
 const SECRET_KEY = process.env.ADMIN_SECRET_KEY || "supersecret";
 
-// ✅ Route pour créer un administrateur
 export const createAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, secretKey } = req.body;
 
-    // 🔐 Vérifier la clé secrète
     if (secretKey !== SECRET_KEY) {
       res.status(403).json({ error: "Clé secrète invalide" });
       return;
     }
 
-    // ✅ Vérifier si l'admin existe déjà
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       res.status(400).json({ error: "Cet email est déjà utilisé" });
       return;
     }
 
-    // 🔐 Hasher le mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ Créer l'administrateur
     const newAdmin = await prisma.user.create({
       data: { name, email, password: hashedPassword, role: "admin" },
     });

@@ -2,12 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "../config/database";
 
-// ✅ Étendre l'interface Request pour inclure `user`
 export interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
 
-// ✅ Middleware pour vérifier l'authentification
 export const authenticate = async (
   req: AuthenticatedRequest,
   res: Response,

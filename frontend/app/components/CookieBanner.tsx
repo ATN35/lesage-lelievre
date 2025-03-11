@@ -6,7 +6,7 @@ export default function CookieBanner() {
   const [consent, setConsent] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch("/api/cookies/user123") // Remplace par l’ID utilisateur
+    fetch("/api/cookies/user123")
       .then((res) => res.json())
       .then((data) => setConsent(data.consent))
       .catch(() => setConsent(null));
