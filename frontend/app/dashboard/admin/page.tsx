@@ -80,7 +80,6 @@ export default function AdminDashboard() {
       });
   };
 
-  // ✅ Supprimer un utilisateur
   const handleDeleteUser = async (userId: string) => {
     if (!confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
 
@@ -148,7 +147,6 @@ export default function AdminDashboard() {
         </table>
       </div>
 
-      {/* Messages */}
       <h2 className="text-2xl font-bold mt-6">Messages des Utilisateurs</h2>
       <div className="overflow-x-auto mt-4">
         <table className="min-w-full bg-white shadow-md rounded-lg">

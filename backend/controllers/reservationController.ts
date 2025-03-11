@@ -12,10 +12,10 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
 
     const reservation = await prisma.reservation.create({
       data: {
-        id: crypto.randomUUID(), // Génère un ID unique
-        user: { connect: { id: userId } },   // Lie la réservation à l'utilisateur
-        product: { connect: { id: productId } }, // Lie la réservation au produit
-        status: "pending", // Statut par défaut
+        id: crypto.randomUUID(), 
+        user: { connect: { id: userId } },  
+        product: { connect: { id: productId } },
+        status: "pending",
       },
     });
 

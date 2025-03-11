@@ -34,7 +34,6 @@ export default function UserDashboard() {
     setRole(storedRole);
     const token = localStorage.getItem("token");
 
-    // ✅ Récupération des infos utilisateur
     fetch("http://localhost:5000/api/auth/me", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -42,7 +41,6 @@ export default function UserDashboard() {
       .then((data) => setUser(data))
       .catch(() => setError("Impossible de récupérer vos informations"));
 
-    // ✅ Récupération des messages envoyés
     fetch("http://localhost:5000/api/messages/user", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -51,7 +49,6 @@ export default function UserDashboard() {
       .catch(() => console.error("Erreur chargement des messages"));
   }, []);
 
-  // ✅ Fonction pour supprimer son compte
   const handleDeleteAccount = async () => {
     setError("");
     setSuccess("");
@@ -70,7 +67,6 @@ export default function UserDashboard() {
         return;
       }
 
-      // ✅ Suppression réussie → Redirection vers la page d'inscription
       setSuccess("Compte supprimé avec succès !");
       localStorage.removeItem("token");
       localStorage.removeItem("role");
@@ -92,7 +88,6 @@ export default function UserDashboard() {
     <div className="p-6">
       <h1 className="text-3xl font-bold">Mon tableau de bord</h1>
 
-      {/* ✅ Affichage des informations utilisateur */}
       {user ? (
         <div className="mt-4 bg-white p-4 rounded shadow-md">
           <h2 className="text-xl font-semibold">Mes informations</h2>
@@ -104,7 +99,6 @@ export default function UserDashboard() {
         <p className="text-gray-500 mt-4">Chargement des informations...</p>
       )}
 
-      {/* ✅ Section Messages */}
       <h2 className="text-xl mt-6">Mes messages envoyés</h2>
       <ul>
         {messages.length > 0 ? (
@@ -119,7 +113,6 @@ export default function UserDashboard() {
         )}
       </ul>
 
-      {/* ✅ Suppression de compte */}
       <div className="mt-6">
         {error && <p className="text-red-500 text-center">{error}</p>}
         {success && <p className="text-green-500 text-center">{success}</p>}

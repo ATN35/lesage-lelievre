@@ -17,7 +17,6 @@ async function connectMongoDB(): Promise<void> {
   }
 }
 
-// ✅ Fonction pour obtenir la collection cookies
 const cookieCollection = (): Collection<Document> => {
   if (!db) {
     throw new Error("MongoDB n'est pas connecté ! Appelle connectMongoDB() d'abord.");

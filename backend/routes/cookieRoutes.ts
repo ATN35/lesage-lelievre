@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 const router = express.Router();
 router.use(cookieParser());
 
-// ✅ Enregistrer le consentement utilisateur
 router.post("/set", async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, consent } = req.body;
@@ -29,7 +28,6 @@ router.post("/set", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// ✅ Récupérer l’état du consentement d’un utilisateur
 router.get("/:userId", async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
@@ -42,7 +40,6 @@ router.get("/:userId", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// ✅ Supprimer le consentement utilisateur
 router.delete("/delete/:userId", async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;

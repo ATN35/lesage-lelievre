@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/database";
 
-// ✅ Étendre l'interface Request pour inclure `user`
 interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; name: string; role: string };
 }
 
-// ✅ Envoyer un message depuis la page de contact
 export const sendFromContact = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
@@ -17,7 +15,6 @@ export const sendFromContact = async (req: AuthenticatedRequest, res: Response):
     const { content } = req.body;
     const senderId = req.user.id;
 
-    // ✅ Trouver un administrateur pour recevoir le message
     const admin = await prisma.user.findFirst({
       where: { role: "admin" },
       select: { id: true },
@@ -43,7 +40,6 @@ export const sendFromContact = async (req: AuthenticatedRequest, res: Response):
   }
 };
 
-// ✅ Récupérer les messages envoyés par l'utilisateur
 export const getUserMessages = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
