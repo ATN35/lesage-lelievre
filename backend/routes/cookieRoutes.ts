@@ -15,8 +15,7 @@ router.post("/set", async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const collection = cookieCollection(); // ✅ Accès sécurisé à MongoDB
-    await collection.updateOne(
+    await cookieCollection().updateOne(
       { userId },
       { $set: { consent, updatedAt: new Date() } },
       { upsert: true }
@@ -34,8 +33,7 @@ router.post("/set", async (req: Request, res: Response): Promise<void> => {
 router.get("/:userId", async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
-    const collection = cookieCollection(); // ✅ Accès sécurisé à MongoDB
-    const cookie = await collection.findOne({ userId });
+    const cookie = await cookieCollection().findOne({ userId });
 
     res.json({ consent: cookie ? cookie.consent : null });
   } catch (error) {
@@ -48,8 +46,7 @@ router.get("/:userId", async (req: Request, res: Response): Promise<void> => {
 router.delete("/delete/:userId", async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
-    const collection = cookieCollection(); // ✅ Accès sécurisé à MongoDB
-    await collection.deleteOne({ userId });
+    await cookieCollection().deleteOne({ userId });
 
     res.clearCookie("userConsent");
     res.json({ message: "Consentement retiré" });
