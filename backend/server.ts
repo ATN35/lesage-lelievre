@@ -34,7 +34,6 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/cookies", cookieRoutes);
 
-// Connect MySQL & MongoDB before launching the server
 Promise.all([connectMySQL(), connectMongoDB()])
   .then(() => {
     const PORT = process.env.PORT || 5000;
