@@ -14,7 +14,7 @@ export default function Home() {
     {
       name: "La Guerche de Bretagne",
       images: [
-        "/images/chambre_funeraire_lesage-lelievre_guerche",
+        "/images/chambre_funeraire_lesage-lelievre_guerche.jpg",
         "/images/sarl-lesage-lelievre-img013bis-791w.jpg",
         "/images/sarl-lesage-lelievre-img062-1920w.jpg",
       ],
