@@ -9,7 +9,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
-      data: { name, email, password: hashedPassword, role: "user" }, // ✅ Ajout du rôle par défaut
+      data: { name, email, password: hashedPassword, role: "user" },
     });
 
     res.status(201).json({ message: "Utilisateur créé avec succès", user: newUser });
@@ -25,7 +25,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { id: true, email: true, password: true, role: true }, // ✅ Vérifie qu'on récupère bien le rôle
+      select: { id: true, email: true, password: true, role: true },
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
