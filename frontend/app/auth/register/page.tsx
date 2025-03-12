@@ -11,7 +11,7 @@ export default function Register() {
   const API_URL =
     process.env.NODE_ENV === "development"
       ? "http://localhost:5000"
-      : "https://ton-backend.railway.app";
+      : "https://lesage-lelievre-production.up.railway.app";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,6 +25,7 @@ export default function Register() {
       const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
@@ -35,12 +36,9 @@ export default function Register() {
       }
 
       router.push("/auth/login");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Une erreur inconnue est survenue");
-      }
+    } catch (error) {
+      console.error("❌ Erreur serveur :", error);
+      setError(error instanceof Error ? error.message : "Une erreur inconnue est survenue");
     }
   };
 

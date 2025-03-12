@@ -9,7 +9,6 @@ export default function Home() {
   const [selectedLocationIndex, setSelectedLocationIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // 📌 Images du carrousel pour chaque localisation
   const locations = [
     {
       name: "La Guerche de Bretagne",
@@ -29,7 +28,6 @@ export default function Home() {
     },
   ];
 
-  // 📌 Changer automatiquement d'image toutes les 5 secondes
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex === 2 ? 0 : prevIndex + 1));
@@ -46,7 +44,6 @@ export default function Home() {
           Depuis plusieurs générations, nous accompagnons les familles avec discrétion et bienveillance dans ces moments difficiles.
         </p>
 
-        {/* 📌 Bouton pour changer de localisation */}
         <div className="mt-6">
           <button
             onClick={() => setSelectedLocationIndex((prev) => (prev === 0 ? 1 : 0))}
@@ -56,7 +53,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 📌 Carrousel d'images */}
         <div className="mt-10 relative w-full max-w-2xl mx-auto">
           <button
             onClick={() => setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? 2 : prevIndex - 1))}
@@ -83,7 +79,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 📌 Icônes et valeurs */}
         <div className="mt-12 flex flex-wrap justify-center items-center gap-8">
           <div className="flex flex-col items-center">
             <Image src="/images/picto-0003-132w.webp" width={80} height={80} alt="Entreprise familiale" />
@@ -103,12 +98,10 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 📌 Carte MapBox */}
         <div className="mt-12">
           <MapBox selectedLocationIndex={selectedLocationIndex} />
         </div>
 
-        {/* 📌 Boutons d'actions */}
         <div className="mt-10 flex justify-center space-x-6">
         <Link href="/contact/location" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
             Nos agences

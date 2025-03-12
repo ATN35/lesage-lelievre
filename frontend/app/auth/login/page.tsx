@@ -10,17 +10,22 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const API_URL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:5000"
+      : "https://lesage-lelievre-production.up.railway.app";
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const res = await fetch("https://ton-backend.railway.app/api/auth/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
         credentials: "include",
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
@@ -35,14 +40,10 @@ export default function LoginPage() {
       localStorage.setItem("role", data.role);
 
       setTimeout(() => {
-        if (data.role === "admin") {
-          router.push("/dashboard/admin");
-        } else {
-          router.push("/dashboard/user");
-        }
+        router.push(data.role === "admin" ? "/dashboard/admin" : "/dashboard/user");
       }, 500);
-    } catch (err) {
-      console.error("Erreur lors de la connexion :", err);
+    } catch (error) {
+      console.error("❌ Erreur serveur :", error);
       setError("Erreur serveur. Veuillez réessayer.");
     } finally {
       setLoading(false);
@@ -80,9 +81,7 @@ export default function LoginPage() {
       </form>
       <p className="mt-4">
         Pas encore de compte ?{" "}
-        <a href="/auth/register" className="text-blue-500">
-          Inscription
-        </a>
+        <a href="/auth/register" className="text-blue-500">Inscription</a>
       </p>
     </div>
   );
