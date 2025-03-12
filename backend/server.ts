@@ -31,13 +31,11 @@ app.use(
   })
 );
 
-// 📌 Middleware Global
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// 📌 API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/reservations", reservationRoutes);
