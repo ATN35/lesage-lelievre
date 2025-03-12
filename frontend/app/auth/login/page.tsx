@@ -16,10 +16,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("https://ton-backend.railway.app/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -49,12 +50,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-center mb-4">Connexion</h2>
-
-      {error && <p className="text-red-500 text-center">{error}</p>}
-
-      <form onSubmit={handleLogin} className="space-y-4">
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-2xl font-bold">Connexion</h1>
+      {error && <p className="text-red-500">{error}</p>}
+      <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-4 w-full max-w-md">
         <input
           type="email"
           placeholder="Email"
@@ -79,6 +78,12 @@ export default function LoginPage() {
           {loading ? "Connexion..." : "Se connecter"}
         </button>
       </form>
+      <p className="mt-4">
+        Pas encore de compte ?{" "}
+        <a href="/auth/register" className="text-blue-500">
+          Inscription
+        </a>
+      </p>
     </div>
   );
 }
