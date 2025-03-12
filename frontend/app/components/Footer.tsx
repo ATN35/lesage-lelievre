@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="bg-gray-900 text-gray-400 p-6 border-t border-gray-700 w-full mt-auto">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <div className="text-center md:text-left">
-          <p className="text-white font-semibold">© 2024 Lesage-Lelièvre - Tous droits réservés.</p>
+          <p className="text-white font-semibold">© 2025 Lesage-Lelièvre - Tous droits réservés.</p>
           <p className="text-sm mt-1">06 76 28 29 06 • contact@lesage-lelievre.fr</p>
         </div>
 
