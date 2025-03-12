@@ -18,8 +18,16 @@ import cookieRoutes from "./routes/cookieRoutes";
 dotenv.config();
 const app = express();
 
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://lesage-lelievre.vercel.app"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 // Global middleware
-app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
@@ -34,7 +42,6 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/cookies", cookieRoutes);
 
-// Connect MySQL & MongoDB before launching the server
 Promise.all([connectMySQL(), connectMongoDB()])
   .then(() => {
     const PORT = process.env.PORT || 5000;
