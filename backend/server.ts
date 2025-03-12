@@ -23,6 +23,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://lesage-lelievre.vercel.app",
+      "https://lesage-lelievre-production.up.railway.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
