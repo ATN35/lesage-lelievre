@@ -1,5 +1,5 @@
 import express, { Response } from "express";
-import { register, login, createAdmin } from "../controllers/authController"; // ✅ Ajout de createAdmin
+import { register, login, createAdmin } from "../controllers/authController";
 import { authenticate, AuthenticatedRequest } from "../middleware/authMiddleware";
 import { prisma } from "../config/database";
 
@@ -127,7 +127,7 @@ router.get("/admin/messages", authenticate, async (req: AuthenticatedRequest, re
         id: true,
         content: true,
         createdAt: true,
-        sender: { select: { id: true, name: true, email: true } }, // Récupère les infos de l'expéditeur
+        sender: { select: { id: true, name: true, email: true } },
       },
       orderBy: { createdAt: "desc" },
     });

@@ -8,14 +8,14 @@ const agencies = [
     name: "Chambre Funéraire - La Guerche de Bretagne",
     address: "12 Rue des Pompes Funèbres, 35130 La Guerche de Bretagne",
     phone: "02 99 96 12 34",
-    image: "/images/chambre_funeraire_lesage-lelievre_guerche.png",
+    image: "/images/chambre_funeraire_lesage-lelievre_guerche.jpg",
   },
   {
     id: 2,
     name: "Chambre Funéraire - Argentré-du-Plessis",
     address: "5 Place du Souvenir, 35370 Argentré-du-Plessis",
     phone: "02 99 76 45 67",
-    image: "/images/chambre_funeraire_lesage-lelievre_argentre.png",
+    image: "/images/chambre_funeraire_lesage-lelievre_argentre.jpg",
   },
 ];
 
