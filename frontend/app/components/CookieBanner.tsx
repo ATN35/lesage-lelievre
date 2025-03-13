@@ -9,6 +9,7 @@ const API_URL =
 
 export default function CookieBanner() {
   const [consent, setConsent] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${API_URL}/api/cookies/user123`, {
@@ -16,8 +17,13 @@ export default function CookieBanner() {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => setConsent(data.consent))
-      .catch(() => setConsent(null));
+      .then((data) => {
+        if (data?.consent !== undefined) {
+          setConsent(data.consent);
+        }
+      })
+      .catch(() => setConsent(null))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleAccept = () => {
@@ -35,6 +41,8 @@ export default function CookieBanner() {
       credentials: "include",
     }).then(() => setConsent(false));
   };
+
+  if (loading) return null;
 
   if (consent !== null) return null;
 
