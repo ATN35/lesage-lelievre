@@ -2,67 +2,46 @@
 
 import { useEffect, useState } from "react";
 
-const API_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5000"
-    : "https://lesage-lelievre-production.up.railway.app";
-
 export default function CookieBanner() {
   const [consent, setConsent] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedConsent = localStorage.getItem("cookieConsent");
-    if (storedConsent !== null) {
-      setConsent(storedConsent === "true");
-      setLoading(false);
-      return;
-    }
+    console.log("🔍 Vérification du consentement...");
 
-    fetch(`${API_URL}/api/cookies/user123`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.consent !== undefined) {
-          setConsent(data.consent);
-          localStorage.setItem("cookieConsent", String(data.consent));
-        }
-      })
-      .catch(() => setConsent(null))
-      .finally(() => setLoading(false));
+    // Vérifier si localStorage contient une valeur
+    const storedConsent = localStorage.getItem("cookieConsent");
+    console.log("📂 Valeur dans localStorage :", storedConsent);
+
+    if (storedConsent === "true" || storedConsent === "false") {
+      console.log("✅ Consentement trouvé :", storedConsent);
+      setConsent(storedConsent === "true");
+    } else {
+      console.log("⚠️ Aucun consentement trouvé. La bannière RESTE AFFICHÉE.");
+      setConsent(null);
+    }
   }, []);
 
   const handleAccept = () => {
-    fetch(`${API_URL}/api/cookies/set`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ userId: "user123", consent: true }),
-    }).then(() => {
-      setConsent(true);
-      localStorage.setItem("cookieConsent", "true");
-    });
+    console.log("✅ L'utilisateur a accepté les cookies.");
+    localStorage.setItem("cookieConsent", "true");
+    setConsent(true);
   };
 
   const handleReject = () => {
-    fetch(`${API_URL}/api/cookies/delete/user123`, {
-      method: "DELETE",
-      credentials: "include",
-    }).then(() => {
-      setConsent(false);
-      localStorage.setItem("cookieConsent", "false");
-    });
+    console.log("❌ L'utilisateur a refusé les cookies.");
+    localStorage.setItem("cookieConsent", "false");
+    setConsent(false);
   };
 
-  if (loading) return null;
-
-  if (consent !== null) return null;
+  // 🚨 **Tant que l'utilisateur n'a pas cliqué, la bannière RESTE affichée**
+  if (consent !== null) {
+    console.log("🚨 La bannière NE DEVRAIT PLUS être affichée.");
+    return null;
+  }
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white shadow-lg border border-gray-300 p-6 rounded-lg w-[400px] text-center z-50">
-      <h2 className="text-lg font-semibold text-gray-800">🍪 Les Cookies</h2>
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white shadow-lg border border-gray-300 p-4 rounded-lg w-[90%] max-w-[400px] text-center z-50">
+      <h2 className="text-lg font-semibold text-gray-800">🍪 Gestion des Cookies</h2>
       <p className="text-gray-600 text-sm mt-2">
         Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez accepter ou refuser.
       </p>
