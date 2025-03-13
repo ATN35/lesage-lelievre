@@ -8,7 +8,6 @@ export default function CookieBanner() {
   useEffect(() => {
     console.log("🔍 Vérification du consentement...");
 
-    // Vérifier si localStorage contient une valeur
     const storedConsent = localStorage.getItem("cookieConsent");
     console.log("📂 Valeur dans localStorage :", storedConsent);
 
@@ -33,7 +32,6 @@ export default function CookieBanner() {
     setConsent(false);
   };
 
-  // 🚨 **Tant que l'utilisateur n'a pas cliqué, la bannière RESTE affichée**
   if (consent !== null) {
     console.log("🚨 La bannière NE DEVRAIT PLUS être affichée.");
     return null;
