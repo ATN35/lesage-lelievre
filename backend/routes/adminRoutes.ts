@@ -4,7 +4,6 @@ import { getUsers, deleteUser, deleteMessage } from "../controllers/authControll
 
 const router = express.Router();
 
-// 🔥 Récupérer tous les utilisateurs
 router.get("/users", authenticate, async (req: AuthenticatedRequest, res) => {
   try {
     await getUsers(req, res);
@@ -14,7 +13,6 @@ router.get("/users", authenticate, async (req: AuthenticatedRequest, res) => {
   }
 });
 
-// 🔥 Supprimer un utilisateur
 router.delete("/users/:id", authenticate, async (req: AuthenticatedRequest, res) => {
   try {
     await deleteUser(req, res);
@@ -24,7 +22,6 @@ router.delete("/users/:id", authenticate, async (req: AuthenticatedRequest, res)
   }
 });
 
-// 🔥 Supprimer un message
 router.delete("/messages/:id", authenticate, async (req: AuthenticatedRequest, res) => {
   try {
     await deleteMessage(req, res);

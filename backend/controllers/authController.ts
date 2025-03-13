@@ -10,7 +10,6 @@ if (!process.env.ADMIN_SECRET_KEY) {
 
 const SECRET_KEY = process.env.ADMIN_SECRET_KEY;
 
-// 🔥 Inscription utilisateur
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password } = req.body;
@@ -33,7 +32,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// 🔥 Connexion utilisateur
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
@@ -56,7 +54,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// 🔥 Créer un administrateur
 export const createAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, secretKey } = req.body;
@@ -84,7 +81,6 @@ export const createAdmin = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// 🔥 Récupérer tous les utilisateurs (Admin uniquement)
 export const getUsers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (req.user?.role !== "admin") {
@@ -103,7 +99,6 @@ export const getUsers = async (req: AuthenticatedRequest, res: Response): Promis
   }
 };
 
-// 🔥 Supprimer un utilisateur (Admin uniquement)
 export const deleteUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (req.user?.role !== "admin") {
@@ -122,7 +117,6 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response): Prom
   }
 };
 
-// 🔥 Supprimer un message (Admin uniquement)
 export const deleteMessage = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (req.user?.role !== "admin") {

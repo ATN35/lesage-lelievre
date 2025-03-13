@@ -9,7 +9,7 @@ type Message = { id: string; content: string; createdAt: string; sender: { name:
 export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [error, setError] = useState(""); // ✅ Erreur stockée et affichée
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const API_URL =
