@@ -6,8 +6,8 @@ import { prisma } from "../config/database";
 const router = express.Router();
 
 router.post("/register", register);
-
 router.post("/login", login);
+router.post("/admin/register", createAdmin);
 
 router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
@@ -28,12 +28,10 @@ router.get("/me", authenticate, async (req: AuthenticatedRequest, res: Response)
 
     res.json(user);
   } catch (error) {
-    console.error("Erreur lors de la récupération de l'utilisateur :", error);
+    console.error("❌ Erreur lors de la récupération de l'utilisateur :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
-
-router.post("/create-admin", createAdmin);
 
 router.delete("/delete-account", authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
@@ -53,7 +51,7 @@ router.delete("/delete-account", authenticate, async (req: AuthenticatedRequest,
 
     res.json({ message: "Compte supprimé avec succès" });
   } catch (error) {
-    console.error("Erreur lors de la suppression du compte :", error);
+    console.error("❌ Erreur lors de la suppression du compte :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
@@ -72,7 +70,6 @@ router.get("/admin/users", authenticate, async (req: AuthenticatedRequest, res: 
         email: true,
         role: true,
         createdAt: true,
-        reservation: { select: { id: true, productId: true, status: true, createdAt: true } },
         messagesSent: { select: { id: true, content: true, createdAt: true } },
         messagesReceived: { select: { id: true, content: true, createdAt: true } },
       },
@@ -80,7 +77,7 @@ router.get("/admin/users", authenticate, async (req: AuthenticatedRequest, res: 
 
     res.json(users);
   } catch (error) {
-    console.error("Erreur récupération des utilisateurs :", error);
+    console.error("❌ Erreur lors de la récupération des utilisateurs :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
@@ -110,7 +107,7 @@ router.delete("/admin/users/:userId", authenticate, async (req: AuthenticatedReq
 
     res.json({ message: "Utilisateur supprimé avec succès" });
   } catch (error) {
-    console.error("Erreur lors de la suppression de l'utilisateur :", error);
+    console.error("❌ Erreur lors de la suppression de l'utilisateur :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
@@ -134,7 +131,7 @@ router.get("/admin/messages", authenticate, async (req: AuthenticatedRequest, re
 
     res.json(messages);
   } catch (error) {
-    console.error("Erreur récupération des messages :", error);
+    console.error("❌ Erreur lors de la récupération des messages :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });

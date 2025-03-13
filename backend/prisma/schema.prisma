@@ -7,66 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Condolence {
-  id         String   @id
-  obituaryId String
-  message    String
-  author     String
-  createdAt  DateTime @default(now())
-  obituary   Obituary @relation(fields: [obituaryId], references: [id], onDelete: Cascade, map: "Condolence_obituaryId_fkey")
-
-  @@index([obituaryId], map: "Condolence_obituaryId_fkey")
-}
-
-model Obituary {
-  id         String       @id
-  date       DateTime
-  message    String
-  deceased   String
-  condolence Condolence[]
-}
-
 model Product {
-  id          String        @id
+  id          String        @id @default(uuid())
   name        String
   description String
-  price       Float
   stock       Int
-  reservation Reservation[]
-}
-
-model Reservation {
-  id        String   @id
-  userId    String
-  productId String
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [id], map: "Reservation_productId_fkey")
-  user      User     @relation(fields: [userId], references: [id], map: "Reservation_userId_fkey")
-
-  @@index([productId], map: "Reservation_productId_fkey")
-  @@index([userId], map: "Reservation_userId_fkey")
 }
 
 model User {
-  id          String        @id @default(uuid())
-  name        String
-  email       String        @unique(map: "User_email_key")
-  password    String
-  role        String        @default("user")
-  createdAt   DateTime      @default(now())
-  reservation Reservation[]
-  messagesSent    Message[] @relation("SentMessages")
-  messagesReceived Message[] @relation("ReceivedMessages")
+  id               String        @id @default(uuid())
+  name             String
+  email            String        @unique
+  password         String
+  role             String        @default("user")
+  createdAt        DateTime      @default(now())
+  messagesSent     Message[]     @relation("UserMessagesSent")
+  messagesReceived Message[]     @relation("UserMessagesReceived")
 }
 
 model Message {
   id         String   @id @default(uuid())
-  senderId   String
-  receiverId String
   content    String
   createdAt  DateTime @default(now())
+  senderId   String
+  receiverId String
+  sender     User     @relation("UserMessagesSent", fields: [senderId], references: [id], map: "Message_senderId_fkey")
+  receiver   User     @relation("UserMessagesReceived", fields: [receiverId], references: [id], map: "Message_receiverId_fkey")
 
-  sender   User @relation("SentMessages", fields: [senderId], references: [id])
-  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  @@index([senderId], map: "Message_senderId_fkey")
+  @@index([receiverId], map: "Message_receiverId_fkey")
 }

@@ -80,8 +80,7 @@ export default function LoginPage() {
         </button>
       </form>
       <p className="mt-4">
-        Pas encore de compte ?{" "}
-        <a href="/auth/register" className="text-blue-500">Inscription</a>
+        Pas de compte ? <a href="/auth/register" className="text-blue-500">Inscription</a>
       </p>
     </div>
   );

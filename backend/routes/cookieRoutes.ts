@@ -20,7 +20,14 @@ router.post("/set", async (req: Request, res: Response): Promise<void> => {
       { upsert: true }
     );
 
-    res.cookie("userConsent", consent, { httpOnly: true, maxAge: 365 * 24 * 60 * 60 * 1000 });
+    res.cookie("userConsent", consent, {
+      httpOnly: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 365 * 24 * 60 * 60 * 1000,
+    });
+
+    console.log(`✅ Cookie défini pour ${userId} - Consent: ${consent}`);
     res.json({ message: "Consentement mis à jour" });
   } catch (error) {
     console.error("❌ Erreur set cookie :", error);
@@ -33,6 +40,7 @@ router.get("/:userId", async (req: Request, res: Response): Promise<void> => {
     const { userId } = req.params;
     const cookie = await cookieCollection().findOne({ userId });
 
+    console.log(`🔍 Récupération cookie pour ${userId}:`, cookie);
     res.json({ consent: cookie ? cookie.consent : null });
   } catch (error) {
     console.error("❌ Erreur get cookie :", error);
@@ -46,6 +54,7 @@ router.delete("/delete/:userId", async (req: Request, res: Response): Promise<vo
     await cookieCollection().deleteOne({ userId });
 
     res.clearCookie("userConsent");
+    console.log(`🗑️ Cookie supprimé pour ${userId}`);
     res.json({ message: "Consentement retiré" });
   } catch (error) {
     console.error("❌ Erreur suppression cookie :", error);

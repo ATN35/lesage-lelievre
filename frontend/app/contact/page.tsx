@@ -11,7 +11,7 @@ export default function ContactPage() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      fetch("http://localhost:5000/api/auth/me", {
+      fetch("https://lesage-lelievre-production.up.railway.app/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => {
@@ -19,10 +19,7 @@ export default function ContactPage() {
           return res.json();
         })
         .then((data) => setUser({ name: data.name, email: data.email }))
-        .catch((error) => {
-          console.error("Erreur lors de la récupération de l'utilisateur :", error);
-          setUser(null);
-        });
+        .catch(() => setUser(null));
     }
   }, []);
 
@@ -37,7 +34,7 @@ export default function ContactPage() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://localhost:5000/api/messages/contact", {
+      const res = await fetch("https://lesage-lelievre-production.up.railway.app/api/messages/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,9 +59,12 @@ export default function ContactPage() {
 
       {user ? (
         <>
-          <p className="text-center text-gray-600">De : {user.name} ({user.email})</p>
-          {status === "success" && <p className="text-green-500 text-center">Message envoyé !</p>}
-          {status === "error" && <p className="text-red-500 text-center">Échec envoi.</p>}
+          <p className="text-center text-gray-600">
+            De : {user.name} ({user.email})
+          </p>
+
+          {status === "success" && <p className="text-green-500 text-center">✅ Message envoyé avec succès !</p>}
+          {status === "error" && <p className="text-red-500 text-center">❌ Envoi du message échoué.</p>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <textarea

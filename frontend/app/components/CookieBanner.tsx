@@ -2,26 +2,38 @@
 
 import { useEffect, useState } from "react";
 
+const API_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : "https://lesage-lelievre-production.up.railway.app";
+
 export default function CookieBanner() {
   const [consent, setConsent] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch("/api/cookies/user123")
+    fetch(`${API_URL}/api/cookies/user123`, {
+      method: "GET",
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => setConsent(data.consent))
       .catch(() => setConsent(null));
   }, []);
 
   const handleAccept = () => {
-    fetch("/api/cookies/set", {
+    fetch(`${API_URL}/api/cookies/set`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ userId: "user123", consent: true }),
     }).then(() => setConsent(true));
   };
 
   const handleReject = () => {
-    fetch("/api/cookies/delete/user123", { method: "DELETE" }).then(() => setConsent(false));
+    fetch(`${API_URL}/api/cookies/delete/user123`, {
+      method: "DELETE",
+      credentials: "include",
+    }).then(() => setConsent(false));
   };
 
   if (consent !== null) return null;

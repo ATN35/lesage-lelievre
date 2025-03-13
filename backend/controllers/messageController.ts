@@ -1,33 +1,25 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/database";
-
-interface AuthenticatedRequest extends Request {
-  user?: { id: string; email: string; name: string; role: string };
-}
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 export const sendFromContact = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    if (!req.user) {
-      res.status(401).json({ error: "Utilisateur non authentifié" });
+    const { content } = req.body;
+
+    if (!content || !req.user) {
+      res.status(400).json({ error: "Données incomplètes" });
       return;
     }
 
-    const { content } = req.body;
-    const senderId = req.user.id;
-
-    const admin = await prisma.user.findFirst({
-      where: { role: "admin" },
-      select: { id: true },
-    });
-
+    const admin = await prisma.user.findFirst({ where: { role: "admin" } });
     if (!admin) {
-      res.status(404).json({ error: "Admin non trouvé" });
+      res.status(500).json({ error: "Aucun administrateur trouvé" });
       return;
     }
 
     await prisma.message.create({
       data: {
-        senderId,
+        senderId: req.user.id,
         receiverId: admin.id,
         content,
       },
@@ -35,8 +27,8 @@ export const sendFromContact = async (req: AuthenticatedRequest, res: Response):
 
     res.status(201).json({ message: "Message envoyé avec succès" });
   } catch (error) {
-    console.error("Erreur lors de l'envoi du message depuis Contact:", error);
-    res.status(500).json({ error: "Erreur serveur" });
+    console.error("❌ Erreur lors de l'envoi du message :", error);
+    res.status(500).json({ error: "Erreur serveur lors de l'envoi du message." });
   }
 };
 
@@ -49,12 +41,13 @@ export const getUserMessages = async (req: AuthenticatedRequest, res: Response):
 
     const messages = await prisma.message.findMany({
       where: { senderId: req.user.id },
+      select: { id: true, content: true, createdAt: true },
       orderBy: { createdAt: "desc" },
     });
 
     res.json(messages);
   } catch (error) {
-    console.error("Erreur lors de la récupération des messages :", error);
-    res.status(500).json({ error: "Erreur serveur" });
+    console.error("❌ Erreur lors de la récupération des messages :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la récupération des messages." });
   }
 };

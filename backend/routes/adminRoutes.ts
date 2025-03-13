@@ -8,7 +8,6 @@ router.get("/users", authenticate, async (req: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       include: {
-        reservation: true,
         messagesSent: true,
         messagesReceived: true,
       },

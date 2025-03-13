@@ -41,7 +41,7 @@ export default function Home() {
       <main className="container mx-auto text-center py-16 px-6">
         <h1 className="text-4xl font-bold text-gray-800">Accompagnement et Respect</h1>
         <p className="text-gray-600 mt-4 text-lg">
-          Depuis plusieurs générations, nous accompagnons les familles avec discrétion et bienveillance dans ces moments difficiles.
+          Depuis plusieurs décennies, nous accompagnons les familles avec discrétion et bienveillance dans ces moments difficiles.
         </p>
 
         <div className="mt-6">
@@ -80,22 +80,17 @@ export default function Home() {
         </div>
 
         <div className="mt-12 flex flex-wrap justify-center items-center gap-8">
-          <div className="flex flex-col items-center">
-            <Image src="/images/picto-0003-132w.webp" width={80} height={80} alt="Entreprise familiale" />
-            <p className="text-gray-700 mt-2 font-semibold">Entreprise familiale depuis 2002</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Image src="/images/picto-0002-132w.webp" width={80} height={80} alt="Intervention funéraire" />
-            <p className="text-gray-700 mt-2 font-semibold">Intervention funéraire 7j/7</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Image src="/images/picto-0001-132w.webp" width={80} height={80} alt="Disponibilité" />
-            <p className="text-gray-700 mt-2 font-semibold">Disponibilité, écoute et discrétion</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Image src="/images/picto-0000-132w.webp" width={80} height={80} alt="Grand choix d’articles funéraires" />
-            <p className="text-gray-700 mt-2 font-semibold">Grand choix d’articles funéraires</p>
-          </div>
+          {[
+            { img: "picto-0003-132w.webp", text: "Entreprise familiale depuis 2002" },
+            { img: "picto-0002-132w.webp", text: "Intervention funéraire 7j/7" },
+            { img: "picto-0001-132w.webp", text: "Disponibilité, écoute et discrétion" },
+            { img: "picto-0000-132w.webp", text: "Grand choix d’articles funéraires" },
+          ].map(({ img, text }, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <Image src={`/images/${img}`} width={80} height={80} alt={text} />
+              <p className="text-gray-700 mt-2 font-semibold">{text}</p>
+            </div>
+          ))}
         </div>
 
         <div className="mt-12">
@@ -103,13 +98,13 @@ export default function Home() {
         </div>
 
         <div className="mt-10 flex justify-center space-x-6">
-        <Link href="/contact/location" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
+          <Link href="/contact/location" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
             Nos agences
           </Link>
           <Link href="/obituaries" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
             Voir les avis obsèques
           </Link>
-        <Link href="/contact" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
+          <Link href="/contact" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
             Nous contacter
           </Link>
         </div>

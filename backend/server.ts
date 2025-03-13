@@ -9,7 +9,6 @@ import { connectMySQL } from "./config/database";
 import { connectMongoDB } from "./models/cookieModel";
 import authRoutes from "./routes/authRoutes";
 import productRoutes from "./routes/productRoutes";
-import reservationRoutes from "./routes/reservationRoutes";
 import obituaryRoutes from "./routes/obituaryRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import adminRoutes from "./routes/adminRoutes";
@@ -38,7 +37,6 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/reservations", reservationRoutes);
 app.use("/api/obituaries", obituaryRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/admin", adminRoutes);
