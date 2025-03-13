@@ -12,6 +12,13 @@ export default function CookieBanner() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const storedConsent = localStorage.getItem("cookieConsent");
+    if (storedConsent !== null) {
+      setConsent(storedConsent === "true");
+      setLoading(false);
+      return;
+    }
+
     fetch(`${API_URL}/api/cookies/user123`, {
       method: "GET",
       credentials: "include",
@@ -20,6 +27,7 @@ export default function CookieBanner() {
       .then((data) => {
         if (data?.consent !== undefined) {
           setConsent(data.consent);
+          localStorage.setItem("cookieConsent", String(data.consent));
         }
       })
       .catch(() => setConsent(null))
@@ -32,14 +40,20 @@ export default function CookieBanner() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ userId: "user123", consent: true }),
-    }).then(() => setConsent(true));
+    }).then(() => {
+      setConsent(true);
+      localStorage.setItem("cookieConsent", "true");
+    });
   };
 
   const handleReject = () => {
     fetch(`${API_URL}/api/cookies/delete/user123`, {
       method: "DELETE",
       credentials: "include",
-    }).then(() => setConsent(false));
+    }).then(() => {
+      setConsent(false);
+      localStorage.setItem("cookieConsent", "false");
+    });
   };
 
   if (loading) return null;
