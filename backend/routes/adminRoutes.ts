@@ -1,22 +1,36 @@
-import express, { Request, Response } from "express";
-import { authenticate } from "../middleware/authMiddleware";
-import { prisma } from "../config/database";
+import express from "express";
+import { authenticate, AuthenticatedRequest } from "../middleware/authMiddleware";
+import { getUsers, deleteUser, deleteMessage } from "../controllers/authController";
 
 const router = express.Router();
 
-router.get("/users", authenticate, async (req: Request, res: Response) => {
+// 🔥 Récupérer tous les utilisateurs
+router.get("/users", authenticate, async (req: AuthenticatedRequest, res) => {
   try {
-    const users = await prisma.user.findMany({
-      include: {
-        messagesSent: true,
-        messagesReceived: true,
-      },
-    });
-
-    res.json(users);
+    await getUsers(req, res);
   } catch (error) {
-    console.error("Erreur lors de la récupération des utilisateurs :", error);
+    console.error("❌ Erreur récupération utilisateurs :", error);
     res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// 🔥 Supprimer un utilisateur
+router.delete("/users/:id", authenticate, async (req: AuthenticatedRequest, res) => {
+  try {
+    await deleteUser(req, res);
+  } catch (error) {
+    console.error("❌ Erreur suppression utilisateur :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression de l'utilisateur." });
+  }
+});
+
+// 🔥 Supprimer un message
+router.delete("/messages/:id", authenticate, async (req: AuthenticatedRequest, res) => {
+  try {
+    await deleteMessage(req, res);
+  } catch (error) {
+    console.error("❌ Erreur suppression message :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression du message." });
   }
 });
 

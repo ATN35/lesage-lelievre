@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../config/database";
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
 if (!process.env.ADMIN_SECRET_KEY) {
   throw new Error("ADMIN_SECRET_KEY n'est pas défini ! Vérifiez votre fichier .env");
@@ -9,10 +10,11 @@ if (!process.env.ADMIN_SECRET_KEY) {
 
 const SECRET_KEY = process.env.ADMIN_SECRET_KEY;
 
+// 🔥 Inscription utilisateur
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { name, email, password } = req.body;
-
   try {
+    const { name, email, password } = req.body;
+
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       res.status(400).json({ error: "Cet email est déjà utilisé" });
@@ -26,39 +28,35 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({ message: "Utilisateur créé avec succès", user: newUser });
   } catch (error) {
-    console.error("Erreur d'inscription:", error);
-    res.status(500).json({ error: "Erreur lors de l'inscription" });
+    console.error("❌ Erreur lors de l'inscription :", error);
+    res.status(500).json({ error: "Erreur serveur lors de l'inscription." });
   }
 };
 
+// 🔥 Connexion utilisateur
 export const login = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-      select: { id: true, email: true, password: true, role: true },
-    });
+    const { email, password } = req.body;
 
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ error: "Identifiants incorrects" });
       return;
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "1d" }
-    );
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, {
+      expiresIn: "1d",
+    });
 
     res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" });
     res.json({ message: "Connexion réussie", token, role: user.role });
   } catch (error) {
-    console.error("Erreur de connexion:", error);
-    res.status(500).json({ error: "Erreur lors de la connexion" });
+    console.error("❌ Erreur lors de la connexion :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la connexion." });
   }
 };
 
+// 🔥 Créer un administrateur
 export const createAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, secretKey } = req.body;
@@ -81,55 +79,64 @@ export const createAdmin = async (req: Request, res: Response): Promise<void> =>
 
     res.status(201).json({ message: "Administrateur créé avec succès", admin: newAdmin });
   } catch (error) {
-    console.error("Erreur lors de la création de l'admin :", error);
+    console.error("❌ Erreur lors de la création de l'administrateur :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 };
 
-export const me = async (req: Request, res: Response): Promise<void> => {
+// 🔥 Récupérer tous les utilisateurs (Admin uniquement)
+export const getUsers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-      res.status(401).json({ error: "Non autorisé" });
+    if (req.user?.role !== "admin") {
+      res.status(403).json({ error: "Accès refusé" });
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
-      select: { id: true, name: true, email: true, role: true },
+    const users = await prisma.user.findMany({
+      select: { id: true, name: true, email: true, role: true, createdAt: true },
     });
 
-    if (!user) {
-      res.status(404).json({ error: "Utilisateur non trouvé" });
-      return;
-    }
-
-    res.json(user);
+    res.json(users);
   } catch (error) {
-    console.error("Erreur lors de la récupération de l'utilisateur:", error);
+    console.error("❌ Erreur récupération utilisateurs :", error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 };
 
-export const deleteAccount = async (req: Request, res: Response): Promise<void> => {
+// 🔥 Supprimer un utilisateur (Admin uniquement)
+export const deleteUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-      res.status(401).json({ error: "Non autorisé" });
+    if (req.user?.role !== "admin") {
+      res.status(403).json({ error: "Accès refusé" });
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
-    
-    await prisma.user.delete({ where: { id: decoded.id } });
+    const userId = req.params.id;
 
-    res.clearCookie("token");
-    res.json({ message: "Compte supprimé avec succès" });
+    await prisma.user.delete({ where: { id: userId } });
+
+    res.json({ message: "Utilisateur supprimé avec succès" });
   } catch (error) {
-    console.error("Erreur suppression compte:", error);
-    res.status(500).json({ error: "Erreur lors de la suppression" });
+    console.error("❌ Erreur suppression utilisateur :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression de l'utilisateur." });
+  }
+};
+
+// 🔥 Supprimer un message (Admin uniquement)
+export const deleteMessage = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (req.user?.role !== "admin") {
+      res.status(403).json({ error: "Accès refusé" });
+      return;
+    }
+
+    const messageId = req.params.id;
+
+    await prisma.message.delete({ where: { id: messageId } });
+
+    res.json({ message: "Message supprimé avec succès" });
+  } catch (error) {
+    console.error("❌ Erreur suppression message :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression du message." });
   }
 };
